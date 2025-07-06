@@ -1,7 +1,7 @@
 ---
 title: Print Hub Dashboard
 subtitle: 3D Printing Services Management
-logo: https://raw.githubusercontent.com/gethomepage/homepage/main/public/logo.png
+logo: https://gethomepage.dev/assets/favicon.ico
 headerStyle: clean
 startUrl: /
 
@@ -24,10 +24,6 @@ background:
   brightness: 30
 
 favicon: /favicon.ico
-
-providers:
-  longhorn:
-    url: http://localhost:9000
 
 fiveColumns: false
 
