@@ -1,9 +1,8 @@
+# Print Hub - Centralized 3D Printing Dashboard
 
-
-# PrintHub
 ![OctoPrint's logo](https://camo.githubusercontent.com/a5e712408ab37bdf61a5ba3d39852828bb5d9538f599794225234403e65834ea/68747470733a2f2f6f63746f7072696e742e6f72672f6173736574732f696d672f6c6f676f2e706e67 =250x)![](https://www.klipper3d.org/img/klipper-logo.png =250x) ![Docker Compose](https://github.com/docker/compose/raw/main/logo.png?raw=true =250x)
 
-A dockerized solution to deploying Marlin or Klipper Based 3d Printers.
+A Docker-based solution that provides a centralized dashboard for managing multiple 3D printing services including OctoPrint, Klipper (Fluidd/Mainsail), and Bamboo Labs integration.
 
 ## Motivation
 Additional Computers can be used to provide additional utility to existing printers (Marlin) or take a step further by using custom printer firmware to achieve better utility than stock MCU firmware. This is typically done with a raspberry pi, however, it can get tedious to set up one or both of these solutions and come with its risks (a power outage to a non UPS'd pi can cause bad times 🧱). This docker deployment has a Mainsail flavour of Klipper you can use or an Octoprint setup (or both) with automated setup and nice subdomains on your network.
@@ -57,3 +56,86 @@ Make sure you do not use DHCP and keep a fixed IP from your modem's dashboard if
 You can access these network-bound addresses anywhere on the internet using a free service such as.
 
 > Consider supporting and checking out the open source projects included with these container if you can, they do very cool stuff 😎
+
+## Features
+
+- **Centralized Dashboard**: Homepage-based UI displaying all available services
+- **Multiple Printer Support**: Supports OctoPrint and Klipper-based setups
+- **Modular Design**: Uses git submodules for external printer stacks
+- **Easy Access**: Single entry point with automatic service discovery
+- **No Modification Required**: Works with stock configurations of submodules
+
+## Architecture
+
+```
+print-hub/
+├── docker-compose.yml          # Main dashboard and proxy
+├── start.sh                    # Startup script
+├── config/
+│   ├── homepage/              # Dashboard configuration
+│   └── nginx/                 # Reverse proxy config
+├── external/                  # Git submodules (don't modify)
+│   ├── octoprint/            # OctoPrint stack
+│   └── prind/                # Klipper stack (Fluidd/Mainsail)
+└── internal/                 # Internal services
+    └── bamboo-connect/       # Bamboo Labs integration
+```
+
+## Quick Start
+
+1. **Start all services:**
+   ```bash
+   ./start.sh
+   ```
+
+2. **Access the dashboard:**
+   - Main Dashboard: `http://<your-pi-ip>`
+   - Direct service access is also available via the dashboard
+
+## Services Available
+
+### Default Services
+- **Homepage Dashboard** (Port 80): Main entry point with service overview
+- **OctoPrint** (Port 160): Traditional 3D printer management
+- **Prind Stack** (Port 80 via Traefik): Klipper-based services
+  - Fluidd: Modern Klipper web interface
+  - Mainsail: Alternative Klipper interface  
+  - Moonraker: Klipper API
+  - Spoolman: Filament management (optional)
+
+### Optional Services (configure as needed)
+- **Bamboo Connect**: Bamboo Labs printer integration
+- **KlipperScreen**: Touch screen interface
+- **Telegram Bot**: Notifications and remote control
+- **Obico**: AI failure detection
+
+## Configuration
+
+### Homepage Dashboard
+Edit files in `config/homepage/` to customize:
+- `services.yaml`: Add/remove services and their URLs
+- `settings.yaml`: Customize appearance and layout
+- `docker.yaml`: Docker integration settings
+
+### Adding New Services
+1. Add the service to your `docker-compose.yml` or submodule
+2. Update `config/homepage/services.yaml` with the new service details
+3. Restart the dashboard: `docker compose restart homepage`
+
+### Changing Active Profiles
+Edit `start.sh` to modify which Prind profiles are active:
+```bash
+# Examples:
+docker compose --profile fluidd up -d              # Fluidd only
+docker compose --profile mainsail up -d            # Mainsail only  
+docker compose --profile fluidd --profile spoolman up -d  # Multiple services
+```
+
+## Port Layout
+
+| Service | Port | Access Method |
+|---------|------|---------------|
+| Homepage Dashboard | 80 | Direct |
+| OctoPrint | 160 | Direct or via /octoprint |
+| Prind (Traefik) | 80 | Proxied paths |
+| Bamboo Connect | 8081 | Direct or via /bamboo |

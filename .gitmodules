@@ -1,0 +1,6 @@
+[submodule "external/prind"]
+	path = external/prind
+	url = https://github.com/mkuf/prind
+[submodule "external/octoprint"]
+	path = external/octoprint
+	url = https://github.com/OctoPrint/octoprint-docker

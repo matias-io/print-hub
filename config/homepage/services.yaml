@@ -1,0 +1,41 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/latest/configs/services
+
+- 3D Printing Services:
+    - OctoPrint:
+        href: http://{{HOMEPAGE_VAR_HOST_IP}}:160
+        description: 3D Printer Management (OctoPrint Stack)
+        icon: octoprint.png
+        ping: http://{{HOMEPAGE_VAR_HOST_IP}}:160
+
+    - Fluidd:
+        href: http://{{HOMEPAGE_VAR_HOST_IP}}:80/fluidd
+        description: Klipper Web Interface (Prind Stack)
+        icon: klipper.png
+        ping: http://{{HOMEPAGE_VAR_HOST_IP}}:80
+
+    - Mainsail:
+        href: http://{{HOMEPAGE_VAR_HOST_IP}}:80/mainsail
+        description: Alternative Klipper Interface (Prind Stack)
+        icon: klipper.png
+        ping: http://{{HOMEPAGE_VAR_HOST_IP}}:80
+
+- Additional Services:
+    - Moonraker API:
+        href: http://{{HOMEPAGE_VAR_HOST_IP}}:80/printer
+        description: Klipper API (Prind Stack)
+        icon: api.png
+        ping: http://{{HOMEPAGE_VAR_HOST_IP}}:80
+
+    - Spoolman:
+        href: http://{{HOMEPAGE_VAR_HOST_IP}}:80/spoolman
+        description: Filament Management (Prind Stack)
+        icon: spoolman.png
+        ping: http://{{HOMEPAGE_VAR_HOST_IP}}:80
+
+    - Bamboo Connect:
+        href: http://{{HOMEPAGE_VAR_HOST_IP}}:8080/bamboo
+        description: Bamboo Labs Integration
+        icon: bamboo.png
+        ping: http://{{HOMEPAGE_VAR_HOST_IP}}:8080
