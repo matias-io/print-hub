@@ -9,6 +9,8 @@
 
 A Docker-based solution that provides a centralized dashboard for managing multiple 3D printing services including OctoPrint, Klipper (Fluidd/Mainsail), and Bamboo Labs integration.
 
+![Demo ](hero-gif.gif)
+
 ## Features
 
 - **Centralized Dashboard**: Homepage-based UI displaying all available services
@@ -20,6 +22,8 @@ A Docker-based solution that provides a centralized dashboard for managing multi
 - **Easy Access**: Single entry point with automatic service discovery
 
 - **Little Modification Required**: Works with stock configurations of submodules
+
+- **Included:** Klipper Host, Octoprint Marlin Host, OctoEverywhere Bambu Connect, Portainer, Nginx, and Homepage
 
 ## Motivation
 
@@ -129,13 +133,14 @@ mkdir ~/containers && cd ~/containers
 2. Pull this repo
 
 ```bash
-git clone https://github.com/matias-io/print-hub
+git clone --recurse-submodules https://github.com/matias-io/print-hub && cd print-hub
 ```
 
 3. Follow `Folder Structure and making custom-builds` and `Configuation` to set up your desired servers and how they are setup.
 4. First time run script (from project directory)
 
 ```bash
+chmod  +x  start.sh
 ./start.sh
 ```
 
@@ -171,6 +176,69 @@ print-hub/
 
 ```
 
+**IMPORTANT: ** In order to keep submodules in `external` and not have to fork a repo, it is necessary to do two changes to use the octoprint and klipper.
+
+- **Octoprint** (/external/octoprint/docker-compose.yaml)
+  You must use port 100 for this
+
+```yaml
+ports:
+  - 100:80
+```
+
+- **Klipper**
+  (/external/prind/docker-compose.yaml)
+
+```yaml
+traefik:
+
+image: traefik:3.4
+
+command:
+  - "--accesslog"
+
+  - "--providers.docker=true"
+
+  - "--providers.docker.exposedbydefault=false"
+
+  - "--entrypoints.web.address=:80"
+
+ports:
+  - "200:80"
+```
+
+(/external/prind/docker-compose.override.yaml) - Comment this section out until you have the correct device ready to explicitly write in
+
+```yaml
+# ## Add your personal config here
+
+# services:
+
+# webcam:
+
+# <<: *ustreamer-svc
+
+# devices:
+
+# - /dev/video0:/dev/webcam
+
+# labels:
+
+# org.prind.service: webcam
+
+# traefik.enable: true
+
+# traefik.http.services.webcam.loadbalancer.server.port: 8080
+
+# traefik.http.routers.webcam.rule: PathPrefix(`/webcam`)
+
+# traefik.http.routers.webcam.entrypoints: web
+
+# traefik.http.middlewares.webcam.stripprefix.prefixes: /webcam
+
+# traefik.http.routers.webcam.middlewares: webcam
+```
+
 ## Configuration
 
 ### Homepage Dashboard
@@ -193,7 +261,7 @@ Edit files in `config/homepage/` to customize:
 
 ### Changing Active Profiles
 
-Edit `start.sh` to modify which Prind profiles are active:
+Edit `start.sh` to modify which Prind profiles are active (or comment out their docker compose files and execution from `start.sh`:
 
 ```bash
 
@@ -204,8 +272,19 @@ docker  compose  --profile  fluidd  up  -d  # Fluidd only
 docker  compose  --profile  mainsail  up  -d  # Mainsail only
 
 docker  compose  --profile  fluidd  --profile  spoolman  up  -d  # Multiple services
-
 ```
+
+### Reference
+
+You can now fully set up each service, you can find their respective documentations below
+
+- **Klipper (Prind)** | https://github.com/mkuf/prind
+- **Octoprint** | https://hub.docker.com/r/octoprint/octoprint
+- **Bambu Connect** | https://octoeverywhere.com/bambu?
+- **Hompage Dashboard** | https://gethomepage.dev/widgets/
+- **Portainer** | https://docs.portainer.io/start/install-ce/server/setup , This should be pretty much plug and play
+
+You can now go back to `Container Setup and Run Instructions` and run your services.
 
 ### ✅ Finishing touches
 
