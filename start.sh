@@ -33,7 +33,7 @@ cd ../../
 
 echo ""
 echo "========================================"
-echo "Print Hub is now running!"
+echo "Print Hub is now running! Make sure you run with sudo if docker was installed with sudo."
 echo "========================================"
 echo "Dashboard: http://$HOST_IP"
 echo "OctoPrint: http://$HOST_IP/octoprints"
